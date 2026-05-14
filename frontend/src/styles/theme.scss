@@ -1,0 +1,43 @@
+:root {
+  --bg-primary: #1a1a2e;
+  --bg-card: #16213e;
+  --bg-hover: #1f2f4e;
+  --border: #2a3a5e;
+  --accent: #af6025;
+  --accent-hover: #c97a3e;
+  --text-primary: #e0e0e0;
+  --text-secondary: #a0a0a0;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+.el-card {
+  background-color: var(--bg-card) !important;
+  border-color: var(--border) !important;
+}
+
+.el-button--primary {
+  --el-button-bg-color: var(--accent);
+  --el-button-border-color: var(--accent);
+  --el-button-hover-bg-color: var(--accent-hover);
+}
+
+.el-menu--horizontal {
+  --el-menu-bg-color: var(--bg-primary);
+  --el-menu-text-color: var(--text-primary);
+  --el-menu-hover-bg-color: var(--bg-hover);
+  border-bottom-color: var(--border) !important;
+}
+
+.el-header {
+  --el-header-bg-color: var(--bg-primary);
+}
+
+.full-width {
+  width: 100%;
+}
