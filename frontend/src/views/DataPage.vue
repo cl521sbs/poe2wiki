@@ -2,12 +2,12 @@
   <div class="data-page">
     <h2>{{ title }}</h2>
     <el-row :gutter="12" class="filters">
-      <el-col :span="4">
-        <el-select v-model="filters.type" placeholder="类型" clearable @change="search">
+      <el-col :xs="24" :sm="8" :md="6" v-if="typeOptions.length > 0">
+        <el-select v-model="filters.type" placeholder="类型" clearable @change="search" style="width: 100%">
           <el-option v-for="t in typeOptions" :key="t" :label="t" :value="t" />
         </el-select>
       </el-col>
-      <el-col :span="6">
+      <el-col :xs="24" :sm="typeOptions.length > 0 ? 8 : 12" :md="typeOptions.length > 0 ? 8 : 10">
         <el-input v-model="filters.keyword" placeholder="搜索名称..." clearable @keyup.enter="search" @clear="search">
           <template #append><el-button @click="search">搜索</el-button></template>
         </el-input>
@@ -87,4 +87,5 @@ onMounted(() => search())
 <style scoped>
 .data-page { padding: 20px; }
 .data-page h2 { color: var(--accent); margin-bottom: 16px; }
+.filters .el-col { margin-bottom: 8px; }
 </style>

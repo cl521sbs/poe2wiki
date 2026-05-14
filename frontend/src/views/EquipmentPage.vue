@@ -2,8 +2,8 @@
   <div class="equipment-page">
     <h2>装备数据库</h2>
     <el-row :gutter="12" class="filters">
-      <el-col :span="4">
-        <el-select v-model="filters.category" placeholder="部位" clearable @change="search">
+      <el-col :xs="24" :sm="8" :md="6">
+        <el-select v-model="filters.category" placeholder="部位" clearable @change="search" style="width: 100%">
           <el-option label="武器" value="weapon" />
           <el-option label="头盔" value="helmet" />
           <el-option label="胸甲" value="body_armour" />
@@ -15,15 +15,15 @@
           <el-option label="腰带" value="belt" />
         </el-select>
       </el-col>
-      <el-col :span="4">
-        <el-select v-model="filters.rarity" placeholder="稀有度" clearable @change="search">
+      <el-col :xs="24" :sm="8" :md="6">
+        <el-select v-model="filters.rarity" placeholder="稀有度" clearable @change="search" style="width: 100%">
           <el-option label="暗金" value="unique" />
           <el-option label="稀有" value="rare" />
           <el-option label="魔法" value="magic" />
           <el-option label="普通" value="normal" />
         </el-select>
       </el-col>
-      <el-col :span="6">
+      <el-col :xs="24" :sm="8" :md="8">
         <el-input v-model="filters.keyword" placeholder="搜索装备名..." clearable @keyup.enter="search" @clear="search">
           <template #append>
             <el-button @click="search">搜索</el-button>
@@ -93,11 +93,7 @@ onMounted(() => search())
 </script>
 
 <style scoped>
-.equipment-page {
-  padding: 20px;
-}
-.equipment-page h2 {
-  color: var(--accent);
-  margin-bottom: 16px;
-}
+.equipment-page { padding: 20px; }
+.equipment-page h2 { color: var(--accent); margin-bottom: 16px; }
+.filters .el-col { margin-bottom: 8px; }
 </style>

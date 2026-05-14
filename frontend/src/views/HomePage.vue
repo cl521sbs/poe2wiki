@@ -12,13 +12,20 @@
         </el-card>
       </el-col>
     </el-row>
+    <div class="hero-sub" v-if="authStore.isLoggedIn && authStore.user?.role === 'admin'">
+      <el-button type="warning" @click="$router.push('/admin')">进入管理后台</el-button>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
+
 const links = [
-  { title: '游戏数据库', desc: '技能 · 装备 · 天赋 · 怪物 · 通货', path: '/database' },
-  { title: 'DPS 计算器', desc: '配置技能和装备，精确计算伤害', path: '/tools/dps' },
+  { title: '游戏数据库', desc: '技能 · 装备 · 天赋 · 怪物 · 通货', path: '/skills' },
+  { title: 'DPS 计算器', desc: '配置技能和装备，精确计算伤害', path: '/calculator' },
   { title: '推荐 Build', desc: '前中后期职业推荐配置', path: '/recommendations' },
   { title: '攻略中心', desc: 'Build攻略 · BOSS打法 · 开荒指南', path: '/guides' },
 ]
@@ -37,6 +44,10 @@ const links = [
 .hero p {
   font-size: 18px;
   color: var(--text-secondary);
+}
+.hero-sub {
+  text-align: center;
+  padding: 0 0 30px;
 }
 .quick-links {
   padding: 0 40px;

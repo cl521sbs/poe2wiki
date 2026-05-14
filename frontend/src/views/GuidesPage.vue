@@ -16,21 +16,26 @@
       </el-col>
     </el-row>
 
-    <el-row :gutter="16" style="margin-top: 16px">
-      <el-col v-for="guide in tableData" :key="guide.id" :span="8" style="margin-bottom: 16px">
-        <el-card shadow="hover" @click="$router.push(`/guides/${guide.id}`)" class="guide-card">
-          <template #header>
-            <div class="guide-title">{{ guide.titleCn }}</div>
-          </template>
-          <div class="guide-meta">
-            <el-tag size="small">{{ guide.category }}</el-tag>
-            <span style="margin-left: 8px; color: var(--text-secondary); font-size: 13px">
-              👁 {{ guide.viewCount }} · ❤️ {{ guide.likeCount }} · ⭐ {{ guide.favoriteCount }}
-            </span>
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
+    <div v-loading="loading" style="min-height: 200px">
+      <el-row :gutter="16" style="margin-top: 16px">
+        <el-col v-for="guide in tableData" :key="guide.id" :xs="24" :sm="12" :md="8" style="margin-bottom: 16px">
+          <el-card shadow="hover" @click="$router.push(`/guides/${guide.id}`)" class="guide-card">
+            <template #header>
+              <div class="guide-title">{{ guide.titleCn }}</div>
+            </template>
+            <div class="guide-meta">
+              <el-tag size="small">{{ guide.category }}</el-tag>
+              <span style="margin-left: 8px; color: var(--text-secondary); font-size: 13px">
+                👁 {{ guide.viewCount }} · ❤️ {{ guide.likeCount }} · ⭐ {{ guide.favoriteCount }}
+              </span>
+            </div>
+          </el-card>
+        </el-col>
+        <el-col v-if="!loading && tableData.length === 0" :span="24">
+          <el-empty description="暂无攻略" />
+        </el-col>
+      </el-row>
+    </div>
 
     <el-pagination
       v-if="total > 0"

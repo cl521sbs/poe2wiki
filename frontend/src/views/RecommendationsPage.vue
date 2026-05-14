@@ -2,8 +2,8 @@
   <div class="recommendations-page">
     <h2>推荐 Build</h2>
     <el-row :gutter="12" class="filters">
-      <el-col :span="4">
-        <el-select v-model="filters.className" placeholder="职业" clearable @change="search">
+      <el-col :xs="24" :sm="8" :md="6">
+        <el-select v-model="filters.className" placeholder="职业" clearable @change="search" style="width: 100%">
           <el-option label="野蛮人" value="Marauder" />
           <el-option label="游侠" value="Ranger" />
           <el-option label="女巫" value="Witch" />
@@ -12,8 +12,8 @@
           <el-option label="圣堂武僧" value="Templar" />
         </el-select>
       </el-col>
-      <el-col :span="4">
-        <el-select v-model="filters.stage" placeholder="阶段" clearable @change="search">
+      <el-col :xs="24" :sm="8" :md="6">
+        <el-select v-model="filters.stage" placeholder="阶段" clearable @change="search" style="width: 100%">
           <el-option label="开荒" value="starter" />
           <el-option label="刷图" value="mapping" />
           <el-option label="打Boss" value="bossing" />
@@ -79,4 +79,5 @@ onMounted(() => search())
 <style scoped>
 .recommendations-page { padding: 20px; }
 .recommendations-page h2 { color: var(--accent); margin-bottom: 16px; }
+.filters .el-col { margin-bottom: 8px; }
 </style>

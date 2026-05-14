@@ -4,7 +4,7 @@
       <div class="logo" @click="$router.push('/')">
         <span>PoE2Wiki</span>
       </div>
-      <el-menu mode="horizontal" :default-active="activeMenu" router>
+      <el-menu mode="horizontal" :default-active="activeMenu" router class="app-menu">
         <el-sub-menu index="data">
           <template #title>数据库</template>
           <el-menu-item index="/skills">技能</el-menu-item>
@@ -14,23 +14,23 @@
           <el-menu-item index="/monsters">怪物</el-menu-item>
           <el-menu-item index="/currency">通货</el-menu-item>
         </el-sub-menu>
-        <el-menu-item index="/calculator">DPS计算器</el-menu-item>
-        <el-menu-item index="/recommendations">推荐Build</el-menu-item>
+        <el-menu-item index="/calculator">计算器</el-menu-item>
+        <el-menu-item index="/recommendations">推荐</el-menu-item>
         <el-menu-item index="/guides">攻略</el-menu-item>
       </el-menu>
       <div class="user-area">
         <template v-if="authStore.isLoggedIn">
+          <el-button v-if="authStore.user?.role === 'admin'" size="small" type="warning" text @click="$router.push('/admin')">管理</el-button>
           <el-dropdown>
-            <span class="user-name">{{ authStore.user?.nickname }}</span>
+            <span class="user-name">{{ authStore.user?.nickname || authStore.user?.username }}</span>
             <template #dropdown>
-              <el-dropdown-item @click="$router.push('/profile')">个人中心</el-dropdown-item>
               <el-dropdown-item @click="authStore.logout()">退出登录</el-dropdown-item>
             </template>
           </el-dropdown>
         </template>
         <template v-else>
-          <el-button @click="$router.push('/login')">登录</el-button>
-          <el-button type="primary" @click="$router.push('/register')">注册</el-button>
+          <el-button size="small" @click="$router.push('/login')">登录</el-button>
+          <el-button size="small" type="primary" @click="$router.push('/register')">注册</el-button>
         </template>
       </div>
     </el-header>
@@ -68,16 +68,19 @@ const activeMenu = computed(() => '/' + route.path.split('/')[1])
   font-weight: bold;
   color: var(--accent);
   cursor: pointer;
-  margin-right: 40px;
+  margin-right: 32px;
+  white-space: nowrap;
 }
-.el-menu {
+.app-menu {
   flex: 1;
   border-bottom: none !important;
+  overflow: hidden;
 }
 .user-area {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  white-space: nowrap;
 }
 .user-name {
   color: var(--text-primary);
