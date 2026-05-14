@@ -4,12 +4,7 @@
     <el-row :gutter="12" class="filters">
       <el-col :xs="24" :sm="8" :md="6">
         <el-select v-model="filters.className" placeholder="职业" clearable @change="search" style="width: 100%">
-          <el-option label="野蛮人" value="Marauder" />
-          <el-option label="游侠" value="Ranger" />
-          <el-option label="女巫" value="Witch" />
-          <el-option label="暗影" value="Shadow" />
-          <el-option label="决斗者" value="Duelist" />
-          <el-option label="圣堂武僧" value="Templar" />
+          <el-option v-for="[val, label] in classOptions" :key="val" :label="label" :value="val" />
         </el-select>
       </el-col>
       <el-col :xs="24" :sm="8" :md="6">
@@ -24,11 +19,13 @@
 
     <el-table :data="tableData" v-loading="loading" stripe style="margin-top: 16px">
       <el-table-column prop="buildName" label="Build名称" width="180" />
-      <el-table-column prop="className" label="职业" width="100" />
+      <el-table-column label="职业" width="100">
+        <template #default="{ row }">{{ classLabel(row.className) }}</template>
+      </el-table-column>
       <el-table-column prop="ascendancy" label="升华" width="120" />
-      <el-table-column prop="stage" label="阶段" width="90">
+      <el-table-column label="阶段" width="90">
         <template #default="{ row }">
-          <el-tag size="small">{{ row.stage }}</el-tag>
+          <el-tag size="small">{{ stageLabel(row.stage) }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="notesCn" label="说明" min-width="300" show-overflow-tooltip />
@@ -55,6 +52,19 @@ const total = ref(0)
 const loading = ref(false)
 const pagination = reactive({ page: 1, size: 20 })
 const filters = reactive({ className: '', stage: '' })
+
+const classOptions: [string, string][] = [
+  ['Marauder', '野蛮人'], ['Ranger', '游侠'], ['Witch', '女巫'],
+  ['Shadow', '暗影'], ['Duelist', '决斗者'], ['Templar', '圣堂武僧'],
+]
+const classLabelMap: Record<string, string> = {}
+for (const [v, l] of classOptions) classLabelMap[v] = l
+function classLabel(v: string) { return classLabelMap[v] || v }
+
+const stageLabels: Record<string, string> = {
+  starter: '开荒', mapping: '刷图', bossing: '打Boss', endgame: '终局',
+}
+function stageLabel(v: string) { return stageLabels[v] || v }
 
 async function search() {
   loading.value = true

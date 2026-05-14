@@ -22,9 +22,13 @@
         <template v-if="authStore.isLoggedIn">
           <el-button v-if="authStore.user?.role === 'admin'" size="small" type="warning" text @click="$router.push('/admin')">管理</el-button>
           <el-dropdown>
-            <span class="user-name">{{ authStore.user?.nickname || authStore.user?.username }}</span>
+            <span class="user-name">
+              <el-avatar :size="28" style="margin-right: 6px; vertical-align: middle">{{ (authStore.user?.nickname || authStore.user?.username || '?')[0] }}</el-avatar>
+              {{ authStore.user?.nickname || authStore.user?.username }}
+            </span>
             <template #dropdown>
-              <el-dropdown-item @click="authStore.logout()">退出登录</el-dropdown-item>
+              <el-dropdown-item @click="$router.push('/profile')">个人设置</el-dropdown-item>
+              <el-dropdown-item divided @click="authStore.logout()">退出登录</el-dropdown-item>
             </template>
           </el-dropdown>
         </template>

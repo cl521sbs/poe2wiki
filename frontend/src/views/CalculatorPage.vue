@@ -61,16 +61,47 @@
       </el-tab-pane>
 
       <el-tab-pane label="Build对比" name="compare">
-        <el-empty description="Build对比功能开发中">
-          <el-button type="primary" @click="activeTab = 'single'">先去计算单Build</el-button>
-        </el-empty>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-card shadow="hover">
+              <template #header><strong>Build A</strong></template>
+              <el-form label-width="80px" size="small">
+                <el-form-item label="技能ID"><el-input-number v-model="cmpA.skillId" :min="1" size="small" /></el-form-item>
+                <el-form-item label="物理 Min"><el-input-number v-model="cmpA.physMin" :min="0" size="small" /></el-form-item>
+                <el-form-item label="物理 Max"><el-input-number v-model="cmpA.physMax" :min="0" size="small" /></el-form-item>
+                <el-form-item label="攻速"><el-input-number v-model="cmpA.attackSpeed" :min="0.1" :step="0.1" size="small" /></el-form-item>
+                <el-form-item label="暴击率%"><el-input-number v-model="cmpA.critChance" :min="0" :max="100" size="small" /></el-form-item>
+              </el-form>
+            </el-card>
+          </el-col>
+          <el-col :span="12">
+            <el-card shadow="hover">
+              <template #header><strong>Build B</strong></template>
+              <el-form label-width="80px" size="small">
+                <el-form-item label="技能ID"><el-input-number v-model="cmpB.skillId" :min="1" size="small" /></el-form-item>
+                <el-form-item label="物理 Min"><el-input-number v-model="cmpB.physMin" :min="0" size="small" /></el-form-item>
+                <el-form-item label="物理 Max"><el-input-number v-model="cmpB.physMax" :min="0" size="small" /></el-form-item>
+                <el-form-item label="攻速"><el-input-number v-model="cmpB.attackSpeed" :min="0.1" :step="0.1" size="small" /></el-form-item>
+                <el-form-item label="暴击率%"><el-input-number v-model="cmpB.critChance" :min="0" :max="100" size="small" /></el-form-item>
+              </el-form>
+            </el-card>
+          </el-col>
+        </el-row>
+        <div style="text-align:center; margin: 20px 0">
+          <el-button type="primary" @click="compareBuilds" :loading="comparing">对比两个 Build</el-button>
+        </div>
+        <el-table v-if="cmpResult" :data="cmpTableData" stripe style="max-width: 500px; margin: 0 auto">
+          <el-table-column prop="label" label="指标" width="120" />
+          <el-table-column prop="a" label="Build A" />
+          <el-table-column prop="b" label="Build B" />
+        </el-table>
       </el-tab-pane>
     </el-tabs>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { calculatorApi, type DpsResponse } from '@/api/modules/calculator'
 
 const activeTab = ref('single')
@@ -98,6 +129,51 @@ async function calculate() {
     result.value = (res as any).data
   } finally {
     calculating.value = false
+  }
+}
+
+// Build comparison
+const comparing = ref(false)
+const cmpA = reactive({ skillId: 21, physMin: 50, physMax: 100, attackSpeed: 1.5, critChance: 6.0 })
+const cmpB = reactive({ skillId: 22, physMin: 30, physMax: 60, attackSpeed: 1.2, critChance: 7.0 })
+const cmpResult = ref<{ avgDamage: { a: number; b: number }; dps: { a: number; b: number }; effectiveDps: { a: number; b: number } } | null>(null)
+
+const cmpTableData = computed(() => {
+  if (!cmpResult.value) return []
+  return [
+    { label: '平均伤害', a: cmpResult.value.avgDamage.a, b: cmpResult.value.avgDamage.b },
+    { label: 'DPS', a: cmpResult.value.dps.a, b: cmpResult.value.dps.b },
+    { label: '有效DPS', a: cmpResult.value.effectiveDps.a, b: cmpResult.value.effectiveDps.b },
+  ]
+})
+
+async function compareBuilds() {
+  comparing.value = true
+  try {
+    const res = await calculatorApi.compare({
+      buildA: {
+        skills: [{ skillId: cmpA.skillId, level: 20, supportGems: [] }],
+        equipment: { weapon: { physMin: cmpA.physMin, physMax: cmpA.physMax, attackSpeed: cmpA.attackSpeed, critChance: cmpA.critChance, critMultiplier: 150 } },
+        passives: { damageInc: 0, attackSpeedInc: 0, critChanceInc: 0, critMultiInc: 0, penetration: 0 },
+        target: { fireRes: 0, coldRes: 0, lightningRes: 0, chaosRes: 0 },
+        buffs: [],
+      },
+      buildB: {
+        skills: [{ skillId: cmpB.skillId, level: 20, supportGems: [] }],
+        equipment: { weapon: { physMin: cmpB.physMin, physMax: cmpB.physMax, attackSpeed: cmpB.attackSpeed, critChance: cmpB.critChance, critMultiplier: 150 } },
+        passives: { damageInc: 0, attackSpeedInc: 0, critChanceInc: 0, critMultiInc: 0, penetration: 0 },
+        target: { fireRes: 0, coldRes: 0, lightningRes: 0, chaosRes: 0 },
+        buffs: [],
+      },
+    })
+    const data = (res as any).data
+    cmpResult.value = {
+      avgDamage: { a: data.buildA.avgDamage, b: data.buildB.avgDamage },
+      dps: { a: data.buildA.dps, b: data.buildB.dps },
+      effectiveDps: { a: data.buildA.effectiveDps, b: data.buildB.effectiveDps },
+    }
+  } finally {
+    comparing.value = false
   }
 }
 </script>

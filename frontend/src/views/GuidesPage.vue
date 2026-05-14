@@ -2,14 +2,14 @@
   <div class="guides-page">
     <h2>攻略中心</h2>
     <el-row :gutter="12" class="filters">
-      <el-col :span="4">
-        <el-select v-model="filters.category" placeholder="分类" clearable @change="search">
-          <el-option label="新手" value="beginner" />
-          <el-option label="Build" value="build" />
-          <el-option label="Farming" value="farming" />
+      <el-col :xs="24" :sm="8" :md="6">
+        <el-select v-model="filters.category" placeholder="分类" clearable @change="search" style="width: 100%">
+          <el-option label="新手入门" value="beginner" />
+          <el-option label="Build攻略" value="build" />
+          <el-option label="刷图 farming" value="farming" />
         </el-select>
       </el-col>
-      <el-col :span="6">
+      <el-col :xs="24" :sm="8" :md="8">
         <el-input v-model="filters.keyword" placeholder="搜索攻略..." clearable @keyup.enter="search" @clear="search">
           <template #append><el-button @click="search">搜索</el-button></template>
         </el-input>
@@ -24,7 +24,7 @@
               <div class="guide-title">{{ guide.titleCn }}</div>
             </template>
             <div class="guide-meta">
-              <el-tag size="small">{{ guide.category }}</el-tag>
+              <el-tag size="small">{{ catLabel(guide.category) }}</el-tag>
               <span style="margin-left: 8px; color: var(--text-secondary); font-size: 13px">
                 👁 {{ guide.viewCount }} · ❤️ {{ guide.likeCount }} · ⭐ {{ guide.favoriteCount }}
               </span>
@@ -59,6 +59,11 @@ const loading = ref(false)
 const pagination = reactive({ page: 1, size: 9 })
 const filters = reactive({ category: '', keyword: '' })
 
+const catLabels: Record<string, string> = {
+  beginner: '新手入门', build: 'Build攻略', farming: '刷图 farming',
+}
+function catLabel(v: string) { return catLabels[v] || v }
+
 async function search() {
   loading.value = true
   try {
@@ -86,4 +91,5 @@ onMounted(() => search())
 .guide-card:hover { transform: translateY(-2px); }
 .guide-title { font-weight: bold; color: var(--text-primary); }
 .guide-meta { display: flex; align-items: center; }
+.filters .el-col { margin-bottom: 8px; }
 </style>

@@ -19,6 +19,7 @@ const router = createRouter({
         { path: 'guides/:id', name: 'GuideDetail', component: () => import('@/views/GuideDetailPage.vue') },
         { path: 'recommendations', name: 'Recommendations', component: () => import('@/views/RecommendationsPage.vue') },
         { path: 'admin', name: 'Admin', component: () => import('@/views/AdminPage.vue') },
+        { path: 'profile', name: 'Profile', component: () => import('@/views/ProfilePage.vue') },
       ],
     },
     { path: '/login', name: 'Login', component: () => import('@/views/LoginPage.vue') },

@@ -63,4 +63,15 @@ export const gameDataApi = {
   getList(type: string, params: Record<string, any>) {
     return request.get<PageResult<any>>(`/game-data/${type}`, { params })
   },
+
+  // Admin CRUD (proxied to /api/admin/data)
+  create(type: string, data: Record<string, any>) {
+    return request.post(`/admin/data/${type}`, data)
+  },
+  update(type: string, id: number, data: Record<string, any>) {
+    return request.put(`/admin/data/${type}/${id}`, data)
+  },
+  delete(type: string, id: number) {
+    return request.delete(`/admin/data/${type}/${id}`)
+  },
 }

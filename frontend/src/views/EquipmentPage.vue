@@ -4,15 +4,7 @@
     <el-row :gutter="12" class="filters">
       <el-col :xs="24" :sm="8" :md="6">
         <el-select v-model="filters.category" placeholder="部位" clearable @change="search" style="width: 100%">
-          <el-option label="武器" value="weapon" />
-          <el-option label="头盔" value="helmet" />
-          <el-option label="胸甲" value="body_armour" />
-          <el-option label="手套" value="gloves" />
-          <el-option label="鞋子" value="boots" />
-          <el-option label="盾牌" value="shield" />
-          <el-option label="戒指" value="ring" />
-          <el-option label="护符" value="amulet" />
-          <el-option label="腰带" value="belt" />
+          <el-option v-for="[val, label] in categoryOptions" :key="val" :label="label" :value="val" />
         </el-select>
       </el-col>
       <el-col :xs="24" :sm="8" :md="6">
@@ -36,10 +28,12 @@
       <el-table-column prop="id" label="ID" width="60" />
       <el-table-column prop="nameCn" label="中文名" width="140" />
       <el-table-column prop="nameEn" label="英文名" width="200" />
-      <el-table-column prop="category" label="部位" width="100" />
-      <el-table-column prop="rarity" label="稀有度" width="80">
+      <el-table-column label="部位" width="100">
+        <template #default="{ row }">{{ catLabel(row.category) }}</template>
+      </el-table-column>
+      <el-table-column label="稀有度" width="80">
         <template #default="{ row }">
-          <el-tag :type="row.rarity === 'unique' ? 'warning' : 'info'" size="small">{{ row.rarity }}</el-tag>
+          <el-tag :type="row.rarity === 'unique' ? 'warning' : 'info'" size="small">{{ rarityLabel(row.rarity) }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="levelRequired" label="等级" width="70" />
@@ -70,6 +64,18 @@ const total = ref(0)
 const loading = ref(false)
 const pagination = reactive({ page: 1, size: 20 })
 const filters = reactive({ category: '', rarity: '', keyword: '' })
+
+const categoryOptions: [string, string][] = [
+  ['weapon', '武器'], ['helmet', '头盔'], ['body_armour', '胸甲'],
+  ['gloves', '手套'], ['boots', '鞋子'], ['shield', '盾牌'],
+  ['ring', '戒指'], ['amulet', '护符'], ['belt', '腰带'],
+]
+const catLabelMap: Record<string, string> = {}
+const rarityLabelMap: Record<string, string> = { unique: '暗金', rare: '稀有', magic: '魔法', normal: '普通' }
+for (const [v, l] of categoryOptions) catLabelMap[v] = l
+
+function catLabel(v: string) { return catLabelMap[v] || v }
+function rarityLabel(v: string) { return rarityLabelMap[v] || v }
 
 async function search() {
   loading.value = true
