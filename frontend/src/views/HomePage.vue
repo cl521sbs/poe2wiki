@@ -12,6 +12,10 @@
         </el-card>
       </el-col>
     </el-row>
+    <div class="hero-actions" v-if="!authStore.isLoggedIn">
+      <el-button size="large" @click="$router.push('/login')">登录</el-button>
+      <el-button size="large" type="primary" @click="$router.push('/register')">注册账号</el-button>
+    </div>
     <div class="hero-sub" v-if="authStore.isLoggedIn && authStore.user?.role === 'admin'">
       <el-button type="warning" @click="$router.push('/admin')">进入管理后台</el-button>
     </div>
@@ -44,6 +48,13 @@ const links = [
 .hero p {
   font-size: 18px;
   color: var(--text-secondary);
+}
+.hero-actions {
+  text-align: center;
+  padding: 0 0 20px;
+}
+.hero-actions .el-button {
+  margin: 0 8px;
 }
 .hero-sub {
   text-align: center;
