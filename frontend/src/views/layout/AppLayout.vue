@@ -5,11 +5,18 @@
         <span>PoE2Wiki</span>
       </div>
       <el-menu mode="horizontal" :default-active="activeMenu" router>
-        <el-menu-item index="/database">数据库</el-menu-item>
-        <el-menu-item index="/tools/dps">DPS计算器</el-menu-item>
+        <el-sub-menu index="data">
+          <template #title>数据库</template>
+          <el-menu-item index="/skills">技能</el-menu-item>
+          <el-menu-item index="/equipment">装备</el-menu-item>
+          <el-menu-item index="/modifiers">词缀</el-menu-item>
+          <el-menu-item index="/passives">天赋</el-menu-item>
+          <el-menu-item index="/monsters">怪物</el-menu-item>
+          <el-menu-item index="/currency">通货</el-menu-item>
+        </el-sub-menu>
+        <el-menu-item index="/calculator">DPS计算器</el-menu-item>
         <el-menu-item index="/recommendations">推荐Build</el-menu-item>
         <el-menu-item index="/guides">攻略</el-menu-item>
-        <el-menu-item index="/community">社区</el-menu-item>
       </el-menu>
       <div class="user-area">
         <template v-if="authStore.isLoggedIn">
