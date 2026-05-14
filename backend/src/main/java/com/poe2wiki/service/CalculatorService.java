@@ -25,7 +25,8 @@ public class CalculatorService {
         Skill skill = skillMapper.selectById(skillConfig.getSkillId());
 
         // 1. 基础伤害
-        DpsRequest.WeaponConfig wp = req.getEquipment().getWeapon();
+        DpsRequest.EquipmentConfig equip = req.getEquipment() != null ? req.getEquipment() : new DpsRequest.EquipmentConfig();
+        DpsRequest.WeaponConfig wp = equip.getWeapon() != null ? equip.getWeapon() : new DpsRequest.WeaponConfig();
         double physBase = (nvl(wp.getPhysMin()) + nvl(wp.getPhysMax())) / 2.0;
         double fireBase = (nvl(wp.getFireMin()) + nvl(wp.getFireMax())) / 2.0;
         double coldBase = (nvl(wp.getColdMin()) + nvl(wp.getColdMax())) / 2.0;
@@ -45,9 +46,10 @@ public class CalculatorService {
         double baseAfterSkill = baseDamage.getTotal() * skillMultiplier;
 
         // 3. 增伤 (increased)
-        double incMultiplier = 1.0 + nvl(req.getPassives().getDamageInc()) / 100.0;
+        DpsRequest.PassiveConfig passives = req.getPassives() != null ? req.getPassives() : new DpsRequest.PassiveConfig();
+        double incMultiplier = 1.0 + nvl(passives.getDamageInc()) / 100.0;
         List<ModSource> incSources = new ArrayList<>();
-        incSources.add(buildSource("天赋", nvl(req.getPassives().getDamageInc())));
+        incSources.add(buildSource("天赋", nvl(passives.getDamageInc())));
 
         ModSources increasedMods = new ModSources();
         increasedMods.setTotal(incMultiplier);
@@ -67,7 +69,7 @@ public class CalculatorService {
 
         // 6. 攻速
         double baseSpeed = nvl(wp.getAttackSpeed());
-        double speedMultiplier = 1.0 + nvl(req.getPassives().getAttackSpeedInc()) / 100.0;
+        double speedMultiplier = 1.0 + nvl(passives.getAttackSpeedInc()) / 100.0;
         double effectiveSpeed = baseSpeed * speedMultiplier;
 
         SpeedInfo speedInfo = new SpeedInfo();
@@ -76,8 +78,8 @@ public class CalculatorService {
 
         // 7. 暴击
         double baseCrit = nvl(wp.getCritChance());
-        double critChance = Math.min(baseCrit * (1.0 + nvl(req.getPassives().getCritChanceInc()) / 100.0), 100.0);
-        double critMulti = (nvl(wp.getCritMultiplier()) + nvl(req.getPassives().getCritMultiInc())) / 100.0;
+        double critChance = Math.min(baseCrit * (1.0 + nvl(passives.getCritChanceInc()) / 100.0), 100.0);
+        double critMulti = (nvl(wp.getCritMultiplier()) + nvl(passives.getCritMultiInc())) / 100.0;
 
         CritInfo critInfo = new CritInfo();
         critInfo.setChance(critChance);
@@ -87,15 +89,16 @@ public class CalculatorService {
         double hitChance = 95.0;  // MVP: 固定值
 
         // 9. 抗性计算
-        double penetration = nvl(req.getPassives().getPenetration());
-        double enemyLightRes = nvl(req.getTarget().getLightningRes()) - penetration;
+        DpsRequest.TargetResistances target = req.getTarget() != null ? req.getTarget() : new DpsRequest.TargetResistances();
+        double penetration = nvl(passives.getPenetration());
+        double enemyLightRes = nvl(target.getLightningRes()) - penetration;
         double resistMultiplier = 1.0 - Math.max(enemyLightRes, 0) / 100.0;
 
         ResistInfo resistInfo = new ResistInfo();
         resistInfo.setLightning(enemyLightRes);
-        resistInfo.setFire(nvl(req.getTarget().getFireRes()));
-        resistInfo.setCold(nvl(req.getTarget().getColdRes()));
-        resistInfo.setChaos(nvl(req.getTarget().getChaosRes()));
+        resistInfo.setFire(nvl(target.getFireRes()));
+        resistInfo.setCold(nvl(target.getColdRes()));
+        resistInfo.setChaos(nvl(target.getChaosRes()));
 
         // 10. 汇总
         double avgDamage = totalDamage;

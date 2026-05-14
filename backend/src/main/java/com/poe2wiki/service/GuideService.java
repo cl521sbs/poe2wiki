@@ -29,7 +29,7 @@ public class GuideService {
         Guide guide = mapper.selectById(id);
         if (guide != null) {
             guide.setViewCount(guide.getViewCount() == null ? 1 : guide.getViewCount() + 1);
-            mapper.updateById(guide);
+            mapper.incrementViewCount(id, guide.getViewCount());
         }
         return guide;
     }
